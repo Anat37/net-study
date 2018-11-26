@@ -77,9 +77,8 @@ namespace DrunkFibonacci
             int current = 1;
             int prev = 1;
             int i = 2;
-            var generator = GetDeterministicRandomSequence();
-            while (true)
-            {
+            IEnumerable<int> generator = GetDeterministicRandomSequence();
+            foreach (var randomValue in generator) {
                 int new_value = current + prev;
                 prev = current;
                 current = new_value;
@@ -88,12 +87,11 @@ namespace DrunkFibonacci
                 {
                     continue;
                 }
-                if ( (i + 2) % 6 == 0)
+                if ((i + 2) % 6 == 0)
                 {
                     new_value = 300;
                 }
-                int y = generator.ElementAt(i);
-                if ( (y & 42) == 42 )
+                if ((randomValue & 42) == 42)
                 {
                     new_value -= new_value & 42;
                 }
@@ -139,10 +137,17 @@ namespace DrunkFibonacci
         {
             // ни чему особо не научишься, просто интересная задачка :)
             var generator = GetDrunkFibonacci();
-            while (true)
+            int[] tmp = new int[16];
+            int i = 0;
+            foreach(var value in generator)
             {
-                yield return generator.Take(16).ToArray();
-                generator = generator.Skip(16);
+                ++i;
+                tmp[(i-1) % 16] = value;
+                if (i % 16 == 0)
+                {
+                    yield return tmp.ToArray();
+                    tmp = new int[16];
+                }
             }
         }
 
